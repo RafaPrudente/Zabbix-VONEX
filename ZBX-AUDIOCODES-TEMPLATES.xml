@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-10-15T10:33:03Z</date>
+    <groups>
+        <group>
+            <name>Templates/Modules</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>ZBX-AUDIOCODES-TEMPLATES</template>
+            <name>ZBX-AUDIOCODES-TEMPLATES</name>
+            <templates>
+                <template>
+                    <name>Template Module ICMP Ping</name>
+                </template>
+                <template>
+                    <name>Template Module Interfaces SNMPv2</name>
+                </template>
+                <template>
+                    <name>ZBX-AUDIOCODES-TEMPLATES - MIB SNMPv2</name>
+                </template>
+            </templates>
+            <groups>
+                <group>
+                    <name>Templates/Modules</name>
+                </group>
+            </groups>
+            <items>
+                <item>
+                    <name>Device uptime</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.2.1.1.3.0</snmp_oid>
+                    <key>system.uptime</key>
+                    <delay>180s</delay>
+                    <history>14d</history>
+                    <trends>0</trends>
+                    <units>uptime</units>
+                    <description>MIB: SNMPv2-MIB&#13;
+The time (in hundredths of a second) since the network management portion of the system was last re-initialized.</description>
+                    <applications>
+                        <application>
+                            <name>Status</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>MULTIPLIER</type>
+                            <params>0.01</params>
+                        </step>
+                    </preprocessing>
+                    <request_method>POST</request_method>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&lt;2m</expression>
+                            <name>{HOST.NAME} has been restarted</name>
+                            <priority>WARNING</priority>
+                            <description>Last value: {ITEM.LASTVALUE1}.&#13;
+The device uptime is less than 10 minutes</description>
+                            <manual_close>YES</manual_close>
+                            <dependencies>
+                                <dependency>
+                                    <name>No SNMP data collection</name>
+                                    <expression>{ZBX-AUDIOCODES-TEMPLATES:zabbix[host,snmp,available].max({$SNMP_TIMEOUT})}=0</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>SNMP availability</name>
+                    <type>INTERNAL</type>
+                    <key>zabbix[host,snmp,available]</key>
+                    <delay>30s</delay>
+                    <history>14d</history>
+                    <trends>0</trends>
+                    <applications>
+                        <application>
+                            <name>Status</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>zabbix.host.available</name>
+                    </valuemap>
+                    <request_method>POST</request_method>
+                    <triggers>
+                        <trigger>
+                            <expression>{max({$SNMP_TIMEOUT})}=0</expression>
+                            <name>No SNMP data collection</name>
+                            <priority>WARNING</priority>
+                            <description>Last value: {ITEM.LASTVALUE1}.&#13;
+SNMP is not available for polling. Please check device connectivity and SNMP settings.</description>
+                            <dependencies>
+                                <dependency>
+                                    <name>Unavailable by ICMP ping</name>
+                                    <expression>{ZBX-AUDIOCODES-TEMPLATES:icmpping.max(#3)}=0</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <screens>
+                <screen>
+                    <name>Network</name>
+                    <hsize>1</hsize>
+                    <vsize>1</vsize>
+                </screen>
+            </screens>
+        </template>
+    </templates>
+    <value_maps>
+        <value_map>
+            <name>zabbix.host.available</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>not available</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>available</newvalue>
+                </mapping>
+                <mapping>
+                    <value>2</value>
+                    <newvalue>unknown</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+    </value_maps>
+</zabbix_export>

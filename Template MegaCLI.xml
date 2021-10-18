@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-10-15T10:26:48Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template MegaCLI</template>
+            <name>Template MegaCLI</name>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Storage</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Disk Critical</name>
+                    <key>disk.critical</key>
+                    <delay>3600</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&lt;&gt;0</expression>
+                            <name>Raid Disk in Critical State</name>
+                            <priority>AVERAGE</priority>
+                            <description>{HOST.NAME} in Critical State</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Disk Degraded</name>
+                    <key>disk.degraded</key>
+                    <delay>3600</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&lt;&gt;0</expression>
+                            <name>Raid Disk Degraded</name>
+                            <priority>HIGH</priority>
+                            <description>{HOST.NAME} with Disk Degraded</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Disk Failed</name>
+                    <key>disk.failed</key>
+                    <delay>3600</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&lt;&gt;0</expression>
+                            <name>Raid Disk Failed</name>
+                            <priority>DISASTER</priority>
+                            <description>{HOST.NAME} with Disk Failed</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Disk Offline</name>
+                    <key>disk.offline</key>
+                    <delay>3600</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&lt;&gt;0</expression>
+                            <name>Raid Disk Offline</name>
+                            <priority>DISASTER</priority>
+                            <description>{HOST.NAME} has Disk Offline</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Disk Predictive</name>
+                    <key>disk.predictive</key>
+                    <delay>3600</delay>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&lt;&gt;0</expression>
+                            <name>Raid Disk with Predictive Failure</name>
+                            <priority>AVERAGE</priority>
+                            <description>{HOST.NAME} with Predictive Failure</description>
+                            <dependencies>
+                                <dependency>
+                                    <name>Raid Disk in Critical State</name>
+                                    <expression>{Template MegaCLI:disk.critical.last()}&lt;&gt;0</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Disk Name</name>
+                    <key>pd.discovery</key>
+                    <delay>3600</delay>
+                    <history>30d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <inventory_link>HARDWARE_FULL</inventory_link>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Disk Information</name>
+                    <key>pd.list</key>
+                    <delay>3600</delay>
+                    <history>30d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Number Of Disk</name>
+                    <key>raid.ID</key>
+                    <delay>3600</delay>
+                    <history>14d</history>
+                    <trends>0</trends>
+                    <units>HDD</units>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+        </template>
+    </templates>
+</zabbix_export>
