@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2022-05-11T14:42:11Z</date>
+    <groups>
+        <group>
+            <name>Discovered hosts</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Module Cisco Voice Call</template>
+            <name>Template Module Cisco Voice Call</name>
+            <groups>
+                <group>
+                    <name>Discovered hosts</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>AudioCodes - Active Calls</name>
+                </application>
+                <application>
+                    <name>Dialogic - Active Calls</name>
+                </application>
+                <application>
+                    <name>E1 - Active Call</name>
+                </application>
+                <application>
+                    <name>SIP - Active Calls</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Active Calls</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.3028.6.1.4.1.1.20.4</snmp_oid>
+                    <key>ActiveConnection</key>
+                    <delay>30s</delay>
+                    <applications>
+                        <application>
+                            <name>Dialogic - Active Calls</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Active Calls</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.5003.10.7.2.21.1.2.0</snmp_oid>
+                    <key>CVActiveConnection</key>
+                    <delay>15s</delay>
+                    <applications>
+                        <application>
+                            <name>AudioCodes - Active Calls</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Active Calls</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.9.9.63.1.3.8.1.1.2.2</snmp_oid>
+                    <key>CvCallVolConnActiveConnection</key>
+                    <delay>15s</delay>
+                    <applications>
+                        <application>
+                            <name>E1 - Active Call</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Dial Peer Voice 0400</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.9.9.63.1.3.8.4.1.1.4000</snmp_oid>
+                    <key>dialpeervoice0400</key>
+                    <delay>15s</delay>
+                    <applications>
+                        <application>
+                            <name>SIP - Active Calls</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Dial Peer Voice 0800</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.9.9.63.1.3.8.4.1.1.800</snmp_oid>
+                    <key>dialpeervoice0800</key>
+                    <delay>15s</delay>
+                    <applications>
+                        <application>
+                            <name>SIP - Active Calls</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Total Dial Peer Voice 0800 - 4000</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.9.9.63.1.3.8.5.1.2.1</snmp_oid>
+                    <key>totaldialpeervoice</key>
+                    <delay>15s</delay>
+                    <applications>
+                        <application>
+                            <name>SIP - Active Calls</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+        </template>
+    </templates>
+</zabbix_export>
