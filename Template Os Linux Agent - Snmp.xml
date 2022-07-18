@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-07-18T18:19:47Z</date>
+    <date>2022-07-18T18:21:49Z</date>
     <groups>
         <group>
             <name>Discovered hosts</name>
@@ -11,6 +11,12 @@
         </group>
         <group>
             <name>Templates</name>
+        </group>
+        <group>
+            <name>Templates/Modules</name>
+        </group>
+        <group>
+            <name>Templates/Operating Systems</name>
         </group>
     </groups>
     <templates>
@@ -920,7 +926,480 @@ Luiz Fernando Gondin Santos
                 </item>
             </items>
         </template>
+        <template>
+            <template>Template Module HOST-RESOURCES-MIB CUSTON SNMPv2</template>
+            <name>Template Module HOST-RESOURCES-MIB CUSTON SNMPv2</name>
+            <description>HOST-RESOURCES-MIB: CPU, Memory and Storage version: 0.14&#13;
+MIBs used:&#13;
+HOST-RESOURCES-MIB</description>
+            <templates>
+                <template>
+                    <name>Template Module HOST-RESOURCES-MIB CPU SNMPv2</name>
+                </template>
+                <template>
+                    <name>Template Module HOST-RESOURCES-MIB storage SNMPv2</name>
+                </template>
+            </templates>
+            <groups>
+                <group>
+                    <name>Templates/Modules</name>
+                </group>
+            </groups>
+            <macros>
+                <macro>
+                    <macro>{$CPU_UTIL_MAX}</macro>
+                    <value>90</value>
+                </macro>
+                <macro>
+                    <macro>{$MEMORY_UTIL_MAX}</macro>
+                    <value>90</value>
+                </macro>
+                <macro>
+                    <macro>{$STORAGE_UTIL_CRIT}</macro>
+                    <value>90</value>
+                </macro>
+                <macro>
+                    <macro>{$STORAGE_UTIL_WARN}</macro>
+                    <value>80</value>
+                </macro>
+                <macro>
+                    <macro>{$TEMP_CRIT}</macro>
+                    <value>60</value>
+                </macro>
+                <macro>
+                    <macro>{$TEMP_CRIT_LOW}</macro>
+                    <value>5</value>
+                </macro>
+                <macro>
+                    <macro>{$TEMP_WARN}</macro>
+                    <value>50</value>
+                </macro>
+            </macros>
+            <screens>
+                <screen>
+                    <name>System performance</name>
+                    <hsize>2</hsize>
+                    <vsize>3</vsize>
+                    <screen_items>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>CPU utilization</name>
+                                <host>Template Module HOST-RESOURCES-MIB CUSTON SNMPv2</host>
+                            </resource>
+                            <width>750</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>25</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                    </screen_items>
+                </screen>
+            </screens>
+        </template>
+        <template>
+            <template>Template Module Linux block devices SNMP</template>
+            <name>Template Module Linux block devices SNMP</name>
+            <description>MIBs used:&#13;
+UCD-DISKIO-MIB&#13;
+&#13;
+Template tooling version used: 0.36</description>
+            <groups>
+                <group>
+                    <name>Templates/Modules</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Storage</name>
+                </application>
+            </applications>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>Block devices discovery</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>discovery[{#DEVNAME},1.3.6.1.4.1.2021.13.15.1.1.2]</snmp_oid>
+                    <key>vfs.dev.discovery[snmp]</key>
+                    <delay>1h</delay>
+                    <filter>
+                        <evaltype>AND</evaltype>
+                        <conditions>
+                            <condition>
+                                <macro>{#DEVNAME}</macro>
+                                <value>{$VFS.DEV.DEVNAME.MATCHES}</value>
+                                <formulaid>A</formulaid>
+                            </condition>
+                            <condition>
+                                <macro>{#DEVNAME}</macro>
+                                <value>{$VFS.DEV.DEVNAME.NOT_MATCHES}</value>
+                                <operator>NOT_MATCHES_REGEX</operator>
+                                <formulaid>B</formulaid>
+                            </condition>
+                        </conditions>
+                    </filter>
+                    <description>Block devices are discovered from UCD-DISKIO-MIB::diskIOTable (http://net-snmp.sourceforge.net/docs/mibs/ucdDiskIOMIB.html#diskIOTable)</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>{#DEVNAME}: Disk read rate</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>1.3.6.1.4.1.2021.13.15.1.1.5.{#SNMPINDEX}</snmp_oid>
+                            <key>vfs.dev.read.rate[diskIOReads.{#SNMPINDEX}]</key>
+                            <history>7d</history>
+                            <value_type>FLOAT</value_type>
+                            <units>!r/s</units>
+                            <description>MIB: UCD-DISKIO-MIB&#13;
+The number of read accesses from this device since boot.</description>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>Disk {#DEVNAME}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>CHANGE_PER_SECOND</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#DEVNAME}: Disk utilization</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>1.3.6.1.4.1.2021.13.15.1.1.9.{#SNMPINDEX}</snmp_oid>
+                            <key>vfs.dev.util[diskIOLA1.{#SNMPINDEX}]</key>
+                            <history>7d</history>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <description>MIB: UCD-DISKIO-MIB&#13;
+The 1 minute average load of disk (%)</description>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>Disk {#DEVNAME}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>{#DEVNAME}: Disk write rate</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>1.3.6.1.4.1.2021.13.15.1.1.6.{#SNMPINDEX}</snmp_oid>
+                            <key>vfs.dev.write.rate[diskIOWrites.{#SNMPINDEX}]</key>
+                            <history>7d</history>
+                            <value_type>FLOAT</value_type>
+                            <units>!w/s</units>
+                            <description>MIB: UCD-DISKIO-MIB&#13;
+The number of write accesses from this device since boot.</description>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>Disk {#DEVNAME}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>CHANGE_PER_SECOND</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                    </item_prototypes>
+                    <trigger_prototypes>
+                        <trigger_prototype>
+                            <expression>{Template Module Linux block devices SNMP:vfs.dev.read.rate[diskIOReads.{#SNMPINDEX}].last(1m)}&gt;1000 or {Template Module Linux block devices SNMP:vfs.dev.write.rate[diskIOWrites.{#SNMPINDEX}].last(1m)}&gt;1000</expression>
+                            <name>{#DEVNAME}: Disk read/write request responses are too high</name>
+                            <priority>WARNING</priority>
+                            <description>This trigger might indicate disk {#DEVNAME} saturation.</description>
+                            <manual_close>YES</manual_close>
+                            <tags>
+                                <tag>
+                                    <tag>scope</tag>
+                                    <value>performance</value>
+                                </tag>
+                            </tags>
+                        </trigger_prototype>
+                    </trigger_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>{#DEVNAME}: Disk read/write rates</name>
+                            <graph_items>
+                                <graph_item>
+                                    <color>1A7C11</color>
+                                    <item>
+                                        <host>Template Module Linux block devices SNMP</host>
+                                        <key>vfs.dev.read.rate[diskIOReads.{#SNMPINDEX}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>2774A4</color>
+                                    <item>
+                                        <host>Template Module Linux block devices SNMP</host>
+                                        <key>vfs.dev.write.rate[diskIOWrites.{#SNMPINDEX}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
+                </discovery_rule>
+            </discovery_rules>
+            <macros>
+                <macro>
+                    <macro>{$VFS.DEV.DEVNAME.MATCHES}</macro>
+                    <value>.+</value>
+                    <description>This macro is used in block devices discovery. Can be overridden on the host or linked template level</description>
+                </macro>
+                <macro>
+                    <macro>{$VFS.DEV.DEVNAME.NOT_MATCHES}</macro>
+                    <value>^(loop[0-9]*|sd[a-z][0-9]+|nbd[0-9]+|sr[0-9]+|fd[0-9]+|dm-[0-9]+|ram[0-9]+|ploop[a-z0-9]+|md[0-9]*|hcp[0-9]*|zram[0-9]*)</value>
+                    <description>This macro is used in block devices discovery. Can be overridden on the host or linked template level</description>
+                </macro>
+            </macros>
+        </template>
+        <template>
+            <template>Template Os Linux Agent - Snmp</template>
+            <name>Template Os Linux Agent - Snmp</name>
+            <description>Template OS Linux version: 0.14</description>
+            <templates>
+                <template>
+                    <name>Template Module Generic SNMPv2</name>
+                </template>
+                <template>
+                    <name>Template Module HOST-RESOURCES-MIB SNMPv2</name>
+                </template>
+                <template>
+                    <name>Template Module Interfaces SNMPv2</name>
+                </template>
+                <template>
+                    <name>Template Module Linux memory by Zabbix agent Active</name>
+                </template>
+                <template>
+                    <name>Template SNMPv2 LM-SENSORS</name>
+                </template>
+            </templates>
+            <groups>
+                <group>
+                    <name>Templates/Operating Systems</name>
+                </group>
+            </groups>
+            <items>
+                <item>
+                    <name>Version of Zabbix agent running</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>agent.version</key>
+                    <history>1w</history>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>General</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                </item>
+                <item>
+                    <name>Interrupts per second</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.2021.11.59.0</snmp_oid>
+                    <key>system.cpu.intr[ssRawInterrupts.0]</key>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                </item>
+                <item>
+                    <name>Load Average 1</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>.1.3.6.1.4.1.2021.10.1.3.1</snmp_oid>
+                    <key>system.cpu.load[percpu,avg1]</key>
+                    <history>30d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <inventory_link>OS</inventory_link>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Load Average 5</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>.1.3.6.1.4.1.2021.10.1.3.2</snmp_oid>
+                    <key>system.cpu.load[percpu,avg5]</key>
+                    <delay>5m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Load Average 15</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>.1.3.6.1.4.1.2021.10.1.3.3</snmp_oid>
+                    <key>system.cpu.load[percpu,avg15]</key>
+                    <delay>15m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Operating system</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>system.sw.os[name]</key>
+                    <delay>1h</delay>
+                    <history>1w</history>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>General</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                </item>
+                <item>
+                    <name>Number of logged in users</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>system.users.num</key>
+                    <history>7d</history>
+                    <description>Number of users who are currently logged in.</description>
+                    <applications>
+                        <application>
+                            <name>General</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$CPU_UTIL_MAX}</macro>
+                    <value>90</value>
+                </macro>
+                <macro>
+                    <macro>{$MEMORY_UTIL_MAX}</macro>
+                    <value>90</value>
+                </macro>
+                <macro>
+                    <macro>{$STORAGE_UTIL_CRIT}</macro>
+                    <value>90</value>
+                </macro>
+                <macro>
+                    <macro>{$STORAGE_UTIL_WARN}</macro>
+                    <value>80</value>
+                </macro>
+                <macro>
+                    <macro>{$TEMP_CRIT}</macro>
+                    <value>60</value>
+                </macro>
+                <macro>
+                    <macro>{$TEMP_CRIT_LOW}</macro>
+                    <value>5</value>
+                </macro>
+                <macro>
+                    <macro>{$TEMP_WARN}</macro>
+                    <value>50</value>
+                </macro>
+            </macros>
+            <screens>
+                <screen>
+                    <name>System performance</name>
+                    <hsize>2</hsize>
+                    <vsize>6</vsize>
+                    <screen_items>
+                        <screen_item>
+                            <resourcetype>20</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>Interface {#IFNAME}({#IFALIAS}): Network traffic</name>
+                                <host>Template Os Linux Agent - Snmp</host>
+                            </resource>
+                            <width>750</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>5</y>
+                            <colspan>2</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>25</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                    </screen_items>
+                </screen>
+            </screens>
+        </template>
     </templates>
+    <graphs>
+        <graph>
+            <name>Load Average</name>
+            <yaxismax>24</yaxismax>
+            <ymin_type_1>FIXED</ymin_type_1>
+            <ymax_type_1>FIXED</ymax_type_1>
+            <graph_items>
+                <graph_item>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template Os Linux Agent - Snmp</host>
+                        <key>system.cpu.load[percpu,avg1]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>F63100</color>
+                    <item>
+                        <host>Template Os Linux Agent - Snmp</host>
+                        <key>system.cpu.load[percpu,avg5]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>2774A4</color>
+                    <item>
+                        <host>Template Os Linux Agent - Snmp</host>
+                        <key>system.cpu.load[percpu,avg15]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
     <value_maps>
         <value_map>
             <name>Fortigate HA Auto Sync</name>

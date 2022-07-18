@@ -1,13 +1,208 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2021-10-15T10:33:03Z</date>
+    <date>2022-07-18T18:25:53Z</date>
     <groups>
         <group>
             <name>Templates/Modules</name>
         </group>
+        <group>
+            <name>Templates/Server hardware</name>
+        </group>
     </groups>
     <templates>
+        <template>
+            <template>Template SNMPv2 LM-SENSORS</template>
+            <name>Template SNMPv2 LM-SENSORS</name>
+            <description>Template for LM-SENSORS mib, specifically from FreeNAS, but probably works for any net-snmp based machine.</description>
+            <groups>
+                <group>
+                    <name>Templates/Server hardware</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>CPU</name>
+                </application>
+                <application>
+                    <name>Temperature</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>CPU Name</name>
+                    <key>system.hw.cpu[1,model]</key>
+                    <delay>1h</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>#2 CPU Name</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.2.1.25.3.2.1.3.196608</snmp_oid>
+                    <key>system.run[cpu get nameofcore196608]</key>
+                    <delay>3600</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <status>DISABLED</status>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>#1 CPU Name</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.2.1.25.3.2.1.3.768</snmp_oid>
+                    <key>system.run[cpu get nameofcores768]</key>
+                    <delay>3600</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <status>DISABLED</status>
+                    <value_type>CHAR</value_type>
+                    <inventory_link>TAG</inventory_link>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>Temperature Discovery</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>discovery[{#SNMPVALUE},LM-SENSORS-MIB::lmTempSensorsDevice]</snmp_oid>
+                    <key>lmsensors</key>
+                    <delay>1h</delay>
+                    <filter>
+                        <evaltype>OR</evaltype>
+                        <conditions>
+                            <condition>
+                                <macro>{#SNMPVALUE}</macro>
+                                <value>^CPU</value>
+                                <operator>NOT_MATCHES_REGEX</operator>
+                                <formulaid>A</formulaid>
+                            </condition>
+                            <condition>
+                                <macro>{#SNMPVALUE}</macro>
+                                <value>^Core</value>
+                                <operator>NOT_MATCHES_REGEX</operator>
+                                <formulaid>B</formulaid>
+                            </condition>
+                            <condition>
+                                <macro>{#SNMPVALUE}</macro>
+                                <value>^Package</value>
+                                <operator>NOT_MATCHES_REGEX</operator>
+                                <formulaid>C</formulaid>
+                            </condition>
+                        </conditions>
+                    </filter>
+                    <lifetime>7d</lifetime>
+                    <description>Discover non-CPU temperature entities in LM Sensors</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Temperature Sensor {#SNMPVALUE}</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>LM-SENSORS-MIB::lmTempSensorsValue.{#SNMPINDEX}</snmp_oid>
+                            <key>lmTempSensorsValue[{#SNMPVALUE}]</key>
+                            <delay>5m</delay>
+                            <history>7d</history>
+                            <trends>0</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>ºC</units>
+                            <applications>
+                                <application>
+                                    <name>Temperature</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>CPU Temperature Discovery</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>discovery[{#SNMPVALUE},LM-SENSORS-MIB::lmTempSensorsDevice]</snmp_oid>
+                    <key>lmsensors.cpu</key>
+                    <delay>1h</delay>
+                    <filter>
+                        <evaltype>OR</evaltype>
+                        <conditions>
+                            <condition>
+                                <macro>{#SNMPVALUE}</macro>
+                                <value>^CPU</value>
+                                <formulaid>A</formulaid>
+                            </condition>
+                            <condition>
+                                <macro>{#SNMPVALUE}</macro>
+                                <value>^Package</value>
+                                <formulaid>B</formulaid>
+                            </condition>
+                            <condition>
+                                <macro>{#SNMPVALUE}</macro>
+                                <value>^Core</value>
+                                <formulaid>C</formulaid>
+                            </condition>
+                        </conditions>
+                    </filter>
+                    <lifetime>7d</lifetime>
+                    <description>Discover CPU temperature entities in LM Sensors</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>CPU Temperature {#SNMPVALUE}</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>LM-SENSORS-MIB::lmTempSensorsValue.{#SNMPINDEX}</snmp_oid>
+                            <key>lmsensors.cpu[{#SNMPVALUE}]</key>
+                            <delay>5m</delay>
+                            <history>7d</history>
+                            <trends>0</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>ºC</units>
+                            <applications>
+                                <application>
+                                    <name>CPU</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>MULTIPLIER</type>
+                                    <params>0.001</params>
+                                </step>
+                            </preprocessing>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last(3)}&gt;{$CPU_HIGH}</expression>
+                                    <name>CPU {#SNMPVALUE} high temp</name>
+                                    <priority>WARNING</priority>
+                                    <description>CPU temperature is higher than {$CPU_HIGH} currently {ITEM.VALUE}</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+            </discovery_rules>
+            <macros>
+                <macro>
+                    <macro>{$CPU_HIGH}</macro>
+                    <value>60.0</value>
+                    <description>High cpu temp for alert</description>
+                </macro>
+            </macros>
+        </template>
         <template>
             <template>ZBX-AUDIOCODES-TEMPLATES</template>
             <name>ZBX-AUDIOCODES-TEMPLATES</name>
@@ -16,7 +211,7 @@
                     <name>Template Module ICMP Ping</name>
                 </template>
                 <template>
-                    <name>Template Module Interfaces SNMPv2</name>
+                    <name>Template Status Module Interface</name>
                 </template>
                 <template>
                     <name>ZBX-AUDIOCODES-TEMPLATES - MIB SNMPv2</name>
@@ -27,6 +222,11 @@
                     <name>Templates/Modules</name>
                 </group>
             </groups>
+            <applications>
+                <application>
+                    <name>Alarms</name>
+                </application>
+            </applications>
             <items>
                 <item>
                     <name>Device uptime</name>
@@ -101,6 +301,41 @@ SNMP is not available for polling. Please check device connectivity and SNMP set
                     </triggers>
                 </item>
             </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>Active Alarms discovery</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>discovery[{#ALRMID}, 1.3.6.1.4.1.5003.11.1.1.1.1.1, {#ALRMNAME}, 1.3.6.1.4.1.5003.11.1.1.1.1.6, {#ALRMSRC}, 1.3.6.1.4.1.5003.11.1.1.1.1.7]</snmp_oid>
+                    <key>acActAlrmSeqNum</key>
+                    <delay>60</delay>
+                    <lifetime>0</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Severity ({#ALRMSRC}, {#ALRMNAME}id{#ALRMID})</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>1.3.6.1.4.1.5003.11.1.1.1.1.8.{#SNMPINDEX}</snmp_oid>
+                            <key>acActiveAlarmSeverity[{#ALRMID}]</key>
+                            <delay>60</delay>
+                            <history>1d</history>
+                            <trends>1d</trends>
+                            <applications>
+                                <application>
+                                    <name>Alarms</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;&gt;0</expression>
+                                    <name>{HOST.NAME}  [{#ALRMSRC}]  {#ALRMNAME}id{#ALRMID}</name>
+                                    <url>events.php?triggerid={TRIGGER.ID}</url>
+                                    <priority>HIGH</priority>
+                                    <manual_close>YES</manual_close>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                </discovery_rule>
+            </discovery_rules>
             <screens>
                 <screen>
                     <name>Network</name>

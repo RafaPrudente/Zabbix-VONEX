@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2021-10-15T10:20:48Z</date>
+    <date>2022-07-18T18:25:30Z</date>
     <groups>
         <group>
-            <name>Templates/Servers Hardware</name>
+            <name>Templates/Server hardware</name>
         </group>
     </groups>
     <templates>
         <template>
             <template>Template SNMPv2 LM-SENSORS</template>
             <name>Template SNMPv2 LM-SENSORS</name>
-            <description>Template for LM-SENSORS mib, works for any net-snmp based machine.</description>
+            <description>Template for LM-SENSORS mib, specifically from FreeNAS, but probably works for any net-snmp based machine.</description>
             <groups>
                 <group>
-                    <name>Templates/Servers Hardware</name>
+                    <name>Templates/Server hardware</name>
                 </group>
             </groups>
             <applications>
@@ -22,15 +22,57 @@
                     <name>CPU</name>
                 </application>
                 <application>
-                    <name>FANs</name>
-                </application>
-                <application>
-                    <name>PSU</name>
-                </application>
-                <application>
                     <name>Temperature</name>
                 </application>
             </applications>
+            <items>
+                <item>
+                    <name>CPU Name</name>
+                    <key>system.hw.cpu[1,model]</key>
+                    <delay>1h</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>#2 CPU Name</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.2.1.25.3.2.1.3.196608</snmp_oid>
+                    <key>system.run[cpu get nameofcore196608]</key>
+                    <delay>3600</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <status>DISABLED</status>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>#1 CPU Name</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.2.1.25.3.2.1.3.768</snmp_oid>
+                    <key>system.run[cpu get nameofcores768]</key>
+                    <delay>3600</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <status>DISABLED</status>
+                    <value_type>CHAR</value_type>
+                    <inventory_link>TAG</inventory_link>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
             <discovery_rules>
                 <discovery_rule>
                     <name>Temperature Discovery</name>
@@ -69,7 +111,9 @@
                             <type>SNMP_AGENT</type>
                             <snmp_oid>LM-SENSORS-MIB::lmTempSensorsValue.{#SNMPINDEX}</snmp_oid>
                             <key>lmTempSensorsValue[{#SNMPVALUE}]</key>
+                            <delay>5m</delay>
                             <history>7d</history>
+                            <trends>0</trends>
                             <value_type>FLOAT</value_type>
                             <units>ºC</units>
                             <applications>
@@ -120,7 +164,9 @@
                             <type>SNMP_AGENT</type>
                             <snmp_oid>LM-SENSORS-MIB::lmTempSensorsValue.{#SNMPINDEX}</snmp_oid>
                             <key>lmsensors.cpu[{#SNMPVALUE}]</key>
+                            <delay>5m</delay>
                             <history>7d</history>
+                            <trends>0</trends>
                             <value_type>FLOAT</value_type>
                             <units>ºC</units>
                             <applications>
@@ -137,7 +183,7 @@
                             <trigger_prototypes>
                                 <trigger_prototype>
                                     <expression>{last(3)}&gt;{$CPU_HIGH}</expression>
-                                    <name>CPU {#SENSOR_NAME} high temp</name>
+                                    <name>CPU {#SNMPVALUE} high temp</name>
                                     <priority>WARNING</priority>
                                     <description>CPU temperature is higher than {$CPU_HIGH} currently {ITEM.VALUE}</description>
                                 </trigger_prototype>
@@ -149,7 +195,7 @@
             <macros>
                 <macro>
                     <macro>{$CPU_HIGH}</macro>
-                    <value>70.0</value>
+                    <value>60.0</value>
                     <description>High cpu temp for alert</description>
                 </macro>
             </macros>

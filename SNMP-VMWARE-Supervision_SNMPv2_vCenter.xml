@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2021-10-15T10:25:16Z</date>
+    <date>2022-07-18T14:37:10Z</date>
     <groups>
         <group>
             <name>RESEAU</name>
         </group>
         <group>
-            <name>VIRTUALISATION</name>
+            <name>TI - VIRTUALIZACAO</name>
         </group>
     </groups>
     <templates>
@@ -18,7 +18,13 @@
 /!\ Must be vCenter 6.0.2a or later /!\</description>
             <templates>
                 <template>
+                    <name>Template Module HOST-RESOURCES-MIB MEMORY SNMPv2</name>
+                </template>
+                <template>
                     <name>Template Module HOST-RESOURCES-MIB SNMPv2</name>
+                </template>
+                <template>
+                    <name>Template Module ICMP Ping</name>
                 </template>
             </templates>
             <groups>
@@ -26,7 +32,7 @@
                     <name>RESEAU</name>
                 </group>
                 <group>
-                    <name>VIRTUALISATION</name>
+                    <name>TI - VIRTUALIZACAO</name>
                 </group>
             </groups>
             <applications>

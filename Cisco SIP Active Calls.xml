@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2022-07-18T14:36:34Z</date>
+    <groups>
+        <group>
+            <name>Templates/Network Devices</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Cisco SIP Active Calls</template>
+            <name>Cisco SIP Active Calls</name>
+            <groups>
+                <group>
+                    <name>Templates/Network Devices</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Active Calls</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Dial Peer Voice 0400</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.9.9.63.1.3.8.4.1.1.4000</snmp_oid>
+                    <key>dialpeervoice0400</key>
+                    <delay>15s</delay>
+                    <applications>
+                        <application>
+                            <name>Active Calls</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Dial Peer Voice 0800</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.9.9.63.1.3.8.4.1.1.800</snmp_oid>
+                    <key>dialpeervoice0800</key>
+                    <delay>15s</delay>
+                    <applications>
+                        <application>
+                            <name>Active Calls</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Total Dial Peer Voice 0800 - 4000</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.9.9.63.1.3.8.5.1.2.1</snmp_oid>
+                    <key>totaldialpeervoice</key>
+                    <delay>15s</delay>
+                    <applications>
+                        <application>
+                            <name>Active Calls</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last(,3)}&gt;=1260 and {max(3)}&gt;=1260</expression>
+                            <name>Interface Active Calls: High bandwidth usage &gt; 70%</name>
+                            <priority>WARNING</priority>
+                            <description>Last value: {ITEM.LASTVALUE1}.</description>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+        </template>
+    </templates>
+    <graphs>
+        <graph>
+            <name>Graphic Interface Active Calls</name>
+            <yaxismax>1800</yaxismax>
+            <ymin_type_1>FIXED</ymin_type_1>
+            <ymax_type_1>FIXED</ymax_type_1>
+            <graph_items>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Cisco SIP Active Calls</host>
+                        <key>totaldialpeervoice</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
+</zabbix_export>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-07-18T18:19:47Z</date>
+    <date>2022-07-18T18:20:21Z</date>
     <groups>
         <group>
             <name>Discovered hosts</name>
@@ -11,6 +11,9 @@
         </group>
         <group>
             <name>Templates</name>
+        </group>
+        <group>
+            <name>Templates/Modules</name>
         </group>
     </groups>
     <templates>
@@ -919,6 +922,87 @@ Luiz Fernando Gondin Santos
                     </applications>
                 </item>
             </items>
+        </template>
+        <template>
+            <template>Template Module HOST-RESOURCES-MIB CUSTON SNMPv2</template>
+            <name>Template Module HOST-RESOURCES-MIB CUSTON SNMPv2</name>
+            <description>HOST-RESOURCES-MIB: CPU, Memory and Storage version: 0.14&#13;
+MIBs used:&#13;
+HOST-RESOURCES-MIB</description>
+            <templates>
+                <template>
+                    <name>Template Module HOST-RESOURCES-MIB CPU SNMPv2</name>
+                </template>
+                <template>
+                    <name>Template Module HOST-RESOURCES-MIB storage SNMPv2</name>
+                </template>
+            </templates>
+            <groups>
+                <group>
+                    <name>Templates/Modules</name>
+                </group>
+            </groups>
+            <macros>
+                <macro>
+                    <macro>{$CPU_UTIL_MAX}</macro>
+                    <value>90</value>
+                </macro>
+                <macro>
+                    <macro>{$MEMORY_UTIL_MAX}</macro>
+                    <value>90</value>
+                </macro>
+                <macro>
+                    <macro>{$STORAGE_UTIL_CRIT}</macro>
+                    <value>90</value>
+                </macro>
+                <macro>
+                    <macro>{$STORAGE_UTIL_WARN}</macro>
+                    <value>80</value>
+                </macro>
+                <macro>
+                    <macro>{$TEMP_CRIT}</macro>
+                    <value>60</value>
+                </macro>
+                <macro>
+                    <macro>{$TEMP_CRIT_LOW}</macro>
+                    <value>5</value>
+                </macro>
+                <macro>
+                    <macro>{$TEMP_WARN}</macro>
+                    <value>50</value>
+                </macro>
+            </macros>
+            <screens>
+                <screen>
+                    <name>System performance</name>
+                    <hsize>2</hsize>
+                    <vsize>3</vsize>
+                    <screen_items>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>CPU utilization</name>
+                                <host>Template Module HOST-RESOURCES-MIB CUSTON SNMPv2</host>
+                            </resource>
+                            <width>750</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>25</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                    </screen_items>
+                </screen>
+            </screens>
         </template>
     </templates>
     <value_maps>

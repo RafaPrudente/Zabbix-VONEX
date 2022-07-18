@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2022-07-18T18:23:51Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+        <group>
+            <name>Templates/Operating systems</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template OS Windows Server 2012-2016</template>
+            <name>Template OS Windows Server 2012-2016</name>
+            <templates>
+                <template>
+                    <name>Template Module ICMP Ping</name>
+                </template>
+                <template>
+                    <name>Template Module Interfaces Windows SNMPv2</name>
+                </template>
+                <template>
+                    <name>Template Module Windows filesystems by Zabbix agent</name>
+                </template>
+                <template>
+                    <name>Template Module Windows generic by Zabbix agent</name>
+                </template>
+                <template>
+                    <name>Template Module Windows memory by Zabbix agent</name>
+                </template>
+                <template>
+                    <name>Template Module Windows physical disks by Zabbix agent</name>
+                </template>
+                <template>
+                    <name>Template Module Windows services by Zabbix agent</name>
+                </template>
+                <template>
+                    <name>Template Module Zabbix agent</name>
+                </template>
+                <template>
+                    <name>Template Windows Event Logs</name>
+                </template>
+            </templates>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+                <group>
+                    <name>Templates/Operating systems</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>CPU</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Memory Available (Physical) %</name>
+                    <type>CALCULATED</type>
+                    <key>MemoryAvailablePhysicalProc</key>
+                    <history>7d</history>
+                    <trends>180d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <params>100*last(&quot;perf_counter[\&quot;\4\24\&quot;,60]&quot;)/last(&quot;system.run[Powershell.exe \&quot;((Get-WmiObject Win32_PhysicalMemory).Capacity | Measure-Object -Sum).Sum\&quot;]&quot;)</params>
+                    <description>Процент используемой физической памяти</description>
+                    <applications>
+                        <application>
+                            <name>Memory</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{avg(5m)}&lt;8</expression>
+                            <name>Memory Available (Physical) &gt; 92% (5 min)</name>
+                            <priority>WARNING</priority>
+                            <description>ОС использует &gt; 92% от физической памяти более 5 минут</description>
+                            <dependencies>
+                                <dependency>
+                                    <name>Memory Available (Physical) &gt; 96% (5 min)</name>
+                                    <expression>{Template OS Windows Server 2012-2016:MemoryAvailablePhysicalProc.avg(5m)}&lt;4</expression>
+                                </dependency>
+                            </dependencies>
+                            <tags>
+                                <tag>
+                                    <tag>Производительность</tag>
+                                </tag>
+                            </tags>
+                        </trigger>
+                        <trigger>
+                            <expression>{avg(5m)}&lt;4</expression>
+                            <name>Memory Available (Physical) &gt; 96% (5 min)</name>
+                            <priority>HIGH</priority>
+                            <description>ОС использует &gt; 96% от физической памяти более 5 минут&#13;
+&#13;
+Если объем доступной памяти слишком мал, есть вероятность, что система начнет использовать для активных процессов файл подкачки. Если системе не хватает физической памяти, то результатом этого могут быть значительные задержки и/или полное зависание системы</description>
+                            <tags>
+                                <tag>
+                                    <tag>Производительность</tag>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Memory Available Bytes</name>
+                    <key>perf_counter[&quot;\4\24&quot;,60]</key>
+                    <history>7d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>B</units>
+                    <applications>
+                        <application>
+                            <name>Memory</name>
+                        </application>
+                    </applications>
+                    <request_method>POST</request_method>
+                </item>
+                <item>
+                    <name>Memory Commit Limit</name>
+                    <key>perf_counter[&quot;\4\30&quot;,300]</key>
+                    <delay>5m</delay>
+                    <history>7d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>B</units>
+                    <description>показывает максимальный объем памяти, который может быть выделен системой. Обычно это фиксированная величина, которая определяется операционной системой</description>
+                    <applications>
+                        <application>
+                            <name>Memory</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Memory Committed Bytes In Use %</name>
+                    <key>perf_counter[&quot;\4\1406&quot;,300]</key>
+                    <delay>5m</delay>
+                    <history>7d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>Соотношение величин счетчиков Commited Bytes и Commit Limit.&#13;
+&#13;
+Следя за счетчиком %Committed Bytes In Use, можно увидеть, что при достижении им величины 100% система начнет увеличивать размеры файла подкачки, пытаясь удовлетворить растущие запросы на память.</description>
+                    <applications>
+                        <application>
+                            <name>Memory</name>
+                        </application>
+                    </applications>
+                    <request_method>POST</request_method>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;85</expression>
+                            <name>Committed Bytes In Use &gt; 85%</name>
+                            <priority>AVERAGE</priority>
+                            <description>Предел выделенной памяти будет расти, если общий объем выделенной памяти приблизится к 90% от предельного значения — если же значение достигнет 95%, то предел вероятно перестанет расти, и появится вероятность возникновения ошибки OutOfMemory. Как только объем выделенной памяти достигнет предела, то система больше не сможет выделять память для процессов. Большинство процессов не справится с данным поведением системы и прекратят свое выполнение. Поэтому очень важно следить за этим счетчиком.</description>
+                            <tags>
+                                <tag>
+                                    <tag>Производительность</tag>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Process Total Private Bytes</name>
+                    <key>perf_counter[&quot;\230(_Total)\186&quot;,300]</key>
+                    <delay>5m</delay>
+                    <history>7d</history>
+                    <trends>90d</trends>
+                    <value_type>FLOAT</value_type>
+                    <units>B</units>
+                    <description>показывает объем выделенной памяти для процесса. Если сумма всех private bytes для всех процессов превысит предел памяти, описанный выше, это значит, что в системе образовалась нехватка памяти и приложения будут отказывать</description>
+                    <applications>
+                        <application>
+                            <name>Memory</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU DPC time</name>
+                    <key>perf_counter_en[&quot;\Processor Information(_total)\% DPC Time&quot;]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>O tempo de DPC do processador é o tempo que um único processador gastou recebendo e atendendo o procedimento diferido&#13;
+chamadas (DPC). DPCs são interrupções que são executadas em uma prioridade mais baixa do que as interrupções padrão. % DPC Tempo é um&#13;
+componente de % de tempo privilegiado porque os DPCs são executados no modo privilegiado. Se um % de tempo DPC alto for&#13;
+sustentado, pode haver um gargalo do processador ou um problema relacionado ao aplicativo ou hardware que pode&#13;
+diminuir significativamente o desempenho geral do sistema.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU interrupt time</name>
+                    <key>perf_counter_en[&quot;\Processor Information(_total)\% Interrupt Time&quot;]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>The Processor Information\% Interrupt Time is the time the processor spends receiving and servicing &#13;
+hardware interrupts during sample intervals. This value is an indirect indicator of the activity of &#13;
+devices that generate interrupts, such as the system clock, the mouse, disk drivers, data communication &#13;
+lines, network interface cards and other peripheral devices. This is an easy way to identify a potential &#13;
+hardware failure. This should never be higher than 20%.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU privileged time</name>
+                    <key>perf_counter_en[&quot;\Processor Information(_total)\% Privileged Time&quot;]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>O contador Informações do Processador\% de Tempo Privilegiado mostra a porcentagem de tempo gasto pelo processador&#13;
+executando no modo Kernel (ou Privilegiado). O modo privilegiado inclui interrupções de serviços dentro do Interrupt&#13;
+Rotinas de serviço (ISRs), executando chamadas de procedimento adiado (DPCs), chamadas de driver de dispositivo e outros modos de kernel&#13;
+funções do sistema operacional Windows®.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU user time</name>
+                    <key>perf_counter_en[&quot;\Processor Information(_total)\% User Time&quot;]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>The Processor Information\% User Time counter shows the percent of time that the processor(s) is spent executing &#13;
+in User mode.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Context switches per second</name>
+                    <key>perf_counter_en[&quot;\System\Context Switches/sec&quot;]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <description>Context Switches/sec is the combined rate at which all processors on the computer are switched from one thread to another.&#13;
+Context switches occur when a running thread voluntarily relinquishes the processor, is preempted by a higher priority ready thread, or switches between user-mode and privileged (kernel) mode to use an Executive or subsystem service.&#13;
+It is the sum of Thread\\Context Switches/sec for all threads running on all processors in the computer and is measured in numbers of switches.&#13;
+There are context switch counters on the System and Thread objects. This counter displays the difference between the values observed in the last two samples, divided by the duration of the sample interval.</description>
+                </item>
+                <item>
+                    <name>CPU queue length</name>
+                    <key>perf_counter_en[&quot;\System\Processor Queue Length&quot;]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <description>The Processor Queue Length shows the number of threads that are observed as delayed in the processor Ready Queue &#13;
+and are waiting to be executed.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Load average CPU</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>discovery[{#CPU.UTIL},1.3.6.1.2.1.25.3.3.1.2]</snmp_oid>
+                    <key>system.cpu.util[cpu]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>MIB: HOST-RESOURCES-MIB&#13;
+The average, over the last minute, of the percentage of time that processors was not idle.&#13;
+Implementations may approximate this one minute smoothing period if necessary.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$..['{#CPU.UTIL}'].avg()</params>
+                        </step>
+                    </preprocessing>
+                </item>
+                <item>
+                    <name>Memory Capacity (Physical) Bytes</name>
+                    <key>system.run[Powershell.exe &quot;((Get-WmiObject Win32_PhysicalMemory).Capacity | Measure-Object -Sum).Sum&quot;]</key>
+                    <delay>24h</delay>
+                    <history>7d</history>
+                    <trends>90d</trends>
+                    <units>B</units>
+                    <description>Размер физической памяти</description>
+                    <applications>
+                        <application>
+                            <name>Memory</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Number of CPUs</name>
+                    <key>wmi.get[root/cimv2,&quot;Select NumberOfLogicalProcessors from Win32_ComputerSystem&quot;]</key>
+                    <history>7d</history>
+                    <description>The number of logical processors available on the computer.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>CPU Discovery</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>discovery[{#SNMPVALUE},1.3.6.1.2.1.25.3.3.1.1]</snmp_oid>
+                    <key>hrProcessorLoad.discovery</key>
+                    <delay>1h</delay>
+                    <description>HOST-RESOURCES-MIB::hrProcessorTable discovery</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>#{#SNMPINDEX}: CPU utilization</name>
+                            <type>SNMP_AGENT</type>
+                            <snmp_oid>1.3.6.1.2.1.25.3.3.1.2.{#SNMPINDEX}</snmp_oid>
+                            <key>system.cpu.util[hrProcessorLoad.{#SNMPINDEX}]</key>
+                            <delay>180</delay>
+                            <history>30d</history>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <description>MIB: HOST-RESOURCES-MIB&#13;
+The average, over the last minute, of the percentage of time that this processor was not idle.Implementations may approximate this one minute smoothing period if necessary.</description>
+                            <applications>
+                                <application>
+                                    <name>CPU</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{avg(5m)}&gt;{$CPU_UTIL_MAX}</expression>
+                                    <name>#{#SNMPINDEX}: High CPU utilization</name>
+                                    <priority>AVERAGE</priority>
+                                    <description>Last value: {ITEM.LASTVALUE1}.</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>#{#SNMPINDEX}: CPU utilization</name>
+                            <ymin_type_1>FIXED</ymin_type_1>
+                            <ymax_type_1>FIXED</ymax_type_1>
+                            <graph_items>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <drawtype>GRADIENT_LINE</drawtype>
+                                    <color>199C0D</color>
+                                    <item>
+                                        <host>Template OS Windows Server 2012-2016</host>
+                                        <key>system.cpu.util[hrProcessorLoad.{#SNMPINDEX}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
+                </discovery_rule>
+            </discovery_rules>
+        </template>
+    </templates>
+    <triggers>
+        <trigger>
+            <expression>{Template OS Windows Server 2012-2016:perf_counter[&quot;\230(_Total)\186&quot;,300].last()}&gt;={Template OS Windows Server 2012-2016:perf_counter[&quot;\4\30&quot;,300].last()}</expression>
+            <name>Process Total Private Bytes &gt; Memory Commit Limit</name>
+            <priority>HIGH</priority>
+            <description>Process\Private Bytes показывает объем выделенной памяти для процесса. Если сумма всех private bytes для всех процессов превысит предел памяти(Memory Commit Limit), это значит, что в системе образовалась нехватка памяти и приложения будут отказывать.</description>
+            <tags>
+                <tag>
+                    <tag>Доступность</tag>
+                </tag>
+            </tags>
+        </trigger>
+    </triggers>
+</zabbix_export>
