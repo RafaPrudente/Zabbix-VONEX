@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2022-08-11T18:34:49Z</date>
+    <groups>
+        <group>
+            <name>Custom templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template - HP RAID Controller</template>
+            <name>Template - HP RAID Controller</name>
+            <groups>
+                <group>
+                    <name>Custom templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>CPU</name>
+                </application>
+                <application>
+                    <name>Storage</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>HP Raid Slot $2: Battery/Capacitor Status</name>
+                    <key>hp_battery</key>
+                    <delay>1h</delay>
+                    <history>2h</history>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>RAID - status</name>
+                    </valuemap>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&lt;&gt;1</expression>
+                            <name>HP RAID - Controller Battery status</name>
+                            <priority>WARNING</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>HP Raid Slot $2: Cache Status</name>
+                    <key>hp_cache</key>
+                    <delay>3m</delay>
+                    <history>2h</history>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>RAID - status</name>
+                    </valuemap>
+                    <triggers>
+                        <trigger>
+                            <expression>{str(1,#10)}=0</expression>
+                            <name>HP RAID - Controller Cache status</name>
+                            <priority>WARNING</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>HP Raid Slot $2: Cache Memory</name>
+                    <key>hp_memory</key>
+                    <delay>1h</delay>
+                    <history>2h</history>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>HP Raid Slot : Physical Drive Status</name>
+                    <key>hp_pdstatus</key>
+                    <delay>1h</delay>
+                    <history>1w</history>
+                    <trends>0</trends>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>RAID - Physical</name>
+                    </valuemap>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}=1</expression>
+                            <name>HP RAID - Physical Driver Status</name>
+                            <priority>AVERAGE</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>HP Raid Slot $2: Physical Drive</name>
+                    <key>hp_phdriver</key>
+                    <delay>1h</delay>
+                    <history>2h</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>HP Raid Slot : Physical Drive Detail</name>
+                    <key>hp_phstatus</key>
+                    <delay>1h</delay>
+                    <history>1w</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>HP Raid Slot $2: Cache Size</name>
+                    <key>hp_size</key>
+                    <delay>1h</delay>
+                    <history>2h</history>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>HP Raid Slot $2: Controller Status</name>
+                    <key>hp_status</key>
+                    <delay>3m</delay>
+                    <history>2h</history>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>RAID - status</name>
+                    </valuemap>
+                    <triggers>
+                        <trigger>
+                            <expression>{str(1,#10)}=0</expression>
+                            <name>HP RAID - Controller status</name>
+                            <priority>AVERAGE</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>HP Raid Slot $2: Fault Tolerance</name>
+                    <key>hp_tolerance</key>
+                    <delay>3m</delay>
+                    <history>2h</history>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>Storage</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>RAID - status</name>
+                    </valuemap>
+                    <triggers>
+                        <trigger>
+                            <expression>{str(1,#10)}=0</expression>
+                            <name>HP RAID - Controller Tolerance status</name>
+                            <priority>WARNING</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>CPU guest time</name>
+                    <key>system.cpu.util[,guest]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>Tempo de convidado (tempo gasto executando uma CPU virtual para um sistema operacional convidado)</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU guest nice time</name>
+                    <key>system.cpu.util[,guest_nice]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>Tempo gasto executando um convidado agradável (CPU virtual para sistemas operacionais convidados sob o controle do kernel Linux)</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU idle time</name>
+                    <key>system.cpu.util[,idle]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>O tempo que a CPU passou sem fazer nada.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU interrupt time</name>
+                    <key>system.cpu.util[,interrupt]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>A quantidade de tempo que a CPU está atendendo a interrupções de hardware.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU iowait time</name>
+                    <key>system.cpu.util[,iowait]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>Quantidade de tempo que a CPU está aguardando a conclusão da E/S.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU nice time</name>
+                    <key>system.cpu.util[,nice]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>O tempo que a CPU gastou executando os processos dos usuários que foram corrigidos.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU softirq time</name>
+                    <key>system.cpu.util[,softirq]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>A quantidade de tempo que a CPU está atendendo a interrupções de software.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU steal time</name>
+                    <key>system.cpu.util[,steal]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>A quantidade de CPU 'roubada' desta máquina virtual pelo hipervisor para outras tarefas (como executar outra máquina virtual).</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU system time</name>
+                    <key>system.cpu.util[,system]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>O tempo que a CPU gastou executando o kernel e seus processos.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU user time</name>
+                    <key>system.cpu.util[,user]</key>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>O tempo que a CPU gastou executando processos de usuários que não foram corrigidos.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+        </template>
+    </templates>
+    <value_maps>
+        <value_map>
+            <name>RAID - Physical</name>
+            <mappings>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>Fail</newvalue>
+                </mapping>
+                <mapping>
+                    <value>2</value>
+                    <newvalue>OK</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+        <value_map>
+            <name>RAID - status</name>
+            <mappings>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>OK</newvalue>
+                </mapping>
+                <mapping>
+                    <value>2</value>
+                    <newvalue>OK</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+    </value_maps>
+</zabbix_export>
